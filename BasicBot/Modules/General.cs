@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using BusinessLogic;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using System;
@@ -11,6 +12,7 @@ namespace BasicBot.Modules
     {
         // Command service is used here to get command info for the help command
         private CommandService _service;
+        private MiscApiHandler _apiHandler = new MiscApiHandler();
 
         // Constructor to inject command service
         public General(CommandService service)
@@ -180,6 +182,18 @@ namespace BasicBot.Modules
                 Console.WriteLine(e);
                 await ReplyAsync("Error: Something went wrong.");
             }
+        }
+
+        [Command("cat")]
+        [Alias("kitty", "meow", "randomcat", "randomkitty")]
+        [Summary("Random cat images. Because reasons.")]
+        public async Task RandomCat()
+        {
+            string cat = await _apiHandler.RandomCat();
+            if (!string.IsNullOrWhiteSpace(cat))
+                await ReplyAsync(cat);
+            else
+                await ReplyAsync("An error occurred.");
         }
     }
 }
