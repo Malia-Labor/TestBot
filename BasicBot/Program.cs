@@ -15,12 +15,14 @@ namespace BasicBot
         private DiscordSocketClient _client;
         private CommandService _commands;
         private CommandHandler _handler;
+        private ScheduleHandler _scheduler;
 
         public async Task MainAsync()
         {
             _client = new DiscordSocketClient();
             _commands = new CommandService();
             _handler = new CommandHandler(_client, _commands);
+            _scheduler = new ScheduleHandler();
 
             // Install commands
             await _handler.InstallCommandsAsync();
@@ -35,6 +37,9 @@ namespace BasicBot
             await _client.StartAsync();
             await _client.SetGameAsync("!help to see commands");
 
+            // Start up scheduler for scheduled tasks
+            _scheduler.LoadScheduler();
+
             // Block this task until the program is closed.
             await Task.Delay(-1);
         }
@@ -43,6 +48,5 @@ namespace BasicBot
             Console.WriteLine($"{DateTime.Now,0:t} [{msg.Severity,8}] {msg.Message}");
             return Task.CompletedTask;
         }
-
     }
 }
